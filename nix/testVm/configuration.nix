@@ -43,6 +43,12 @@ in
         adminApiEndpoint = {
           useSsl = false;
           host = "admin.sb.localhost";
+          localPort = 3004;
+          publicPort = 8080;
+        };
+        webrtcEndpoint = {
+          useSsl = false;
+          host = "voice.sb.localhost";
           localPort = 3005;
           publicPort = 8080;
         };
@@ -61,6 +67,10 @@ in
           enable = true;
           extraConfiguration.ConnectionStrings.Spacebar = csConnectionString;
         };
+        pion-sfu = {
+          enable = true;
+          publicIp = "127.0.0.1";
+        };
         extraEnvironment = {
           DATABASE = "postgres://postgres:postgres@127.0.0.1/spacebar";
           #WEBRTC_PORT_RANGE=60000-61000;
@@ -72,12 +82,6 @@ in
           #LOG_PROTO_UPDATES=true;
           #LOG_PROTO_FRECENCY_UPDATES=true;
           #LOG_PROTO_SETTINGS_UPDATES=true;
-          #WRTC_PUBLIC_IP=webrtc.old.server.spacebar.chat;
-          WRTC_PUBLIC_IP = "216.230.228.19";
-          WRTC_PORT_MIN = 60000;
-          WRTC_PORT_MAX = 65000;
-          WRTC_LIBRARY = "@spacebarchat/medooze-webrtc";
-          #WRTC_LIBRARY=mediasoup-spacebar-wrtc;
         };
       };
     in
