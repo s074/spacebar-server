@@ -69,8 +69,8 @@ export async function emitEvent(payload: Omit<Event, "created_at">) {
         await publishEvent();
     } else if (process.env.EVENT_TRANSMISSION === "unix" && process.env.EVENT_SOCKET_PATH) {
         if (!unixSocketWriter) {
-            unixSocketWriter = new UnixSocketWriter(process.env.EVENT_SOCKET_PATH);
-            await unixSocketWriter.init();
+            console.error("[Event] Unix socket writer not initialized, cannot emit event!");
+            throw new Error("Unix socket writer not initialized");
         }
         await unixSocketWriter.emit(payload);
     } else if (process.env.EVENT_TRANSMISSION === "process") {
@@ -82,6 +82,13 @@ export async function emitEvent(payload: Omit<Event, "created_at">) {
 
 export async function initEvent() {
     await RabbitMQ.init(); // does nothing if rabbitmq is not setup
+
+    if (process.env.EVENT_TRANSMISSION === "unix" && process.env.EVENT_SOCKET_PATH) {
+        if (!unixSocketWriter) {
+            unixSocketWriter = new UnixSocketWriter(process.env.EVENT_SOCKET_PATH);
+            await unixSocketWriter.init();
+        }
+    }
 
     // Set up the spacebar event listener (used for config reload, etc.)
     const setupSpacebarListener = async () => {
