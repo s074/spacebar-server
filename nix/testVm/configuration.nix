@@ -15,6 +15,7 @@ in
   services.nginx.virtualHosts."api.sb.localhost" = nginxTestSigning;
   services.nginx.virtualHosts."gw.sb.localhost" = nginxTestSigning;
   services.nginx.virtualHosts."cdn.sb.localhost" = nginxTestSigning;
+  services.nginx.virtualHosts."webrtc.sb.localhost" = nginxTestSigning;
   services.nginx.virtualHosts."admin.sb.localhost" = nginxTestSigning;
 
   services.spacebarchat-server =
