@@ -320,6 +320,15 @@ class UnixSocketListener {
     }
 }
 
+function getPidCmdline(pid: number): string | null {
+    try {
+        const cmdline = fs.readFileSync(`/proc/${pid}/cmdline`, "utf-8");
+        return cmdline.replaceAll("\0", " ").trim();
+    } catch (e) {
+        return null;
+    }
+}
+
 class UnixSocketWriter {
     socketPath: string;
     clients: { [key: string]: Socket } = {};
@@ -336,6 +345,8 @@ class UnixSocketWriter {
 
         const connect = (file: string) => {
             const fullPath = path.join(this.socketPath, file);
+            const pid = Number(path.basename(file, ".sock"));
+            console.log("[Events] Attempting to connect to unix socket:", fullPath, "| proc:", getPidCmdline(pid) ?? red("No such pid: " + pid));
 
             // avoid duplicate connections
             if (this.clients[fullPath] && !this.clients[fullPath].destroyed) {
@@ -345,6 +356,7 @@ class UnixSocketWriter {
 
             // clean up old connection if it exists
             if (this.clients[fullPath]) {
+                console.log("[Events] Removing stale unix socket client for", fullPath);
                 try {
                     this.clients[fullPath].destroy();
                 } catch (e) {
